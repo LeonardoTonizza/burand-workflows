@@ -19,7 +19,8 @@ export const startWorkflowExecutionStep = onDocumentCreated(`${WORKFLOW_EXECUTIO
 
   await event.data.ref.update({
     status: 'running',
-    startedAt: FieldValue.serverTimestamp()
+    startedAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
   });
 
   await dispatchWorkersToQueue(data, step);

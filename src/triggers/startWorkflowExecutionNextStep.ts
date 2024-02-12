@@ -27,7 +27,8 @@ export const startWorkflowExecutionNextStep = onDocumentUpdated(`${WORKFLOW_EXEC
   if (!oldEveryCompleted && newEveryCompleted) {
     await event.data.after.ref.update({
       status: 'completed',
-      completedAt: FieldValue.serverTimestamp()
+      completedAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp()
     });
 
     return;

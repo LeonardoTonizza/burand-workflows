@@ -1,5 +1,5 @@
 import { ofFirestore } from '@burand/functions/firestore';
-import { getFirestore } from 'firebase-admin/firestore';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { Request, TaskQueueFunction, TaskQueueOptions, onTaskDispatched } from 'firebase-functions/v2/tasks';
 
 import { FirestoreCollecionName } from '../config/FirestoreCollecionName.js';
@@ -38,7 +38,8 @@ export function onWorkerDispatched<T>(
       });
 
       t.update(workerExecutionRef, {
-        steps: data.steps
+        steps: data.steps,
+        updatedAt: FieldValue.serverTimestamp()
       });
     });
 
@@ -63,7 +64,8 @@ export function onWorkerDispatched<T>(
         });
 
         t.update(sfDocRef, {
-          steps: data.steps
+          steps: data.steps,
+          updatedAt: FieldValue.serverTimestamp()
         });
       });
     } catch (error) {
@@ -86,7 +88,8 @@ export function onWorkerDispatched<T>(
 
         t.update(sfDocRef, {
           status: 'failed',
-          steps: data.steps
+          steps: data.steps,
+          updatedAt: FieldValue.serverTimestamp()
         });
       });
 
