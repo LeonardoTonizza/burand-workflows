@@ -3,7 +3,7 @@ import { WorkflowExecutionStepLog } from './WorkflowExecutionStepLog.js';
 export interface WorkflowExecutionStep {
     completedAt: Date | null;
     executionId: string | null;
-    trace: string | null;
+    trace: string[];
     logs: WorkflowExecutionStepLog[];
     name: string;
     nextStep: string | null;
