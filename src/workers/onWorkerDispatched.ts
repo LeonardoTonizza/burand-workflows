@@ -1,5 +1,6 @@
 import { ofFirestore } from '@burand/functions/firestore';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { error, log } from 'firebase-functions/logger';
 import { Request, TaskQueueFunction, TaskQueueOptions, onTaskDispatched } from 'firebase-functions/v2/tasks';
 
 import { FirestoreCollecionName } from '../config/FirestoreCollecionName.js';
@@ -18,6 +19,8 @@ export function onWorkerDispatched<T>(
   handler: (request: Request<WorkerDispatched<T>>) => void | Promise<void>
 ): TaskQueueFunction<WorkerDispatched<T>> {
   return onTaskDispatched<WorkerDispatched<T>>(options, async event => {
+    log('onWorkerDispatched triggered', event);
+
     await getFirestore().runTransaction(async t => {
       const workerExecutionRef = getFirestore().collection(WORKFLOW_EXECUTIONS).doc(event.data.workerId);
       const doc = await t.get(workerExecutionRef);
@@ -29,13 +32,17 @@ export function onWorkerDispatched<T>(
       }
 
       step.executionId = event.id;
-      step.trace = event.headers ? event.headers['x-cloud-trace-context'] : null;
+
       step.startedAt = new Date();
       step.status = 'running';
       step.logs.push({
         createdAt: new Date(),
         status: 'running'
       });
+
+      if (event.headers?.['x-cloud-trace-context']) {
+        step.trace.push(event.headers['x-cloud-trace-context']);
+      }
 
       t.update(workerExecutionRef, {
         steps: data.steps,
@@ -44,7 +51,9 @@ export function onWorkerDispatched<T>(
     });
 
     try {
+      log('Handler execution started');
       await handler(event);
+      log('Handler execution completed');
 
       await getFirestore().runTransaction(async t => {
         const sfDocRef = getFirestore().collection(WORKFLOW_EXECUTIONS).doc(event.data.workerId);
@@ -68,7 +77,9 @@ export function onWorkerDispatched<T>(
           updatedAt: FieldValue.serverTimestamp()
         });
       });
-    } catch (error) {
+    } catch (err) {
+      error('Error caught in onWorkerDispatched', err);
+
       await getFirestore().runTransaction(async t => {
         const sfDocRef = getFirestore().collection(WORKFLOW_EXECUTIONS).doc(event.data.workerId);
         const doc = await t.get(sfDocRef);
@@ -93,7 +104,7 @@ export function onWorkerDispatched<T>(
         });
       });
 
-      throw error;
+      throw err;
     }
   });
 }

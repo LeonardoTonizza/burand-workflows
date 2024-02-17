@@ -11,7 +11,7 @@ export function mapWorkflowTemplateStepsToExecutionSteps(steps: WorkflowTemplate
       call,
       completedAt: null,
       executionId: null,
-      trace: null,
+      trace: [],
       startedAt: null,
       status: 'idle',
       logs: []

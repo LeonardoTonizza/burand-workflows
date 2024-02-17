@@ -85,7 +85,7 @@ export class WorkflowExecutionService {
 
     const link = generateGoogleLoggingURL(
       projectId,
-      worker.steps.map(s => s.trace).filter((s): s is string => !!s)
+      worker.steps.flatMap(s => s.trace)
     );
 
     return link;
