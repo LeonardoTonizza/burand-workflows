@@ -31,8 +31,6 @@ export function onWorkerDispatched<T>(
         return;
       }
 
-      step.executionId = event.id;
-
       step.startedAt = new Date();
       step.status = 'running';
       step.logs.push({

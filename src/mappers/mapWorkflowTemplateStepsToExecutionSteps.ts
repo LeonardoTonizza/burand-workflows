@@ -10,7 +10,6 @@ export function mapWorkflowTemplateStepsToExecutionSteps(steps: WorkflowTemplate
       parallelSteps,
       call,
       completedAt: null,
-      executionId: null,
       trace: [],
       startedAt: null,
       status: 'idle',
