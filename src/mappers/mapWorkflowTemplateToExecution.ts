@@ -12,12 +12,13 @@ export function mapWorkflowTemplateToExecution(
   const steps = mapWorkflowTemplateStepsToExecutionSteps(version.steps);
 
   return {
-    steps,
-    payload: null,
     completedAt: null,
+    payload: null,
     startedAt: null,
     status: 'idle',
-    version: template.activeVersion,
-    templateId: template.id
+    steps,
+    templateId: template.id,
+    userId: null,
+    version: template.activeVersion
   } satisfies AddDocument<WorkflowExecution>;
 }

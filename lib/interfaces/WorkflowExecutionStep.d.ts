@@ -1,8 +1,8 @@
 import { WorkflowExecutionStatus } from '../types/WorkflowExecutionStatus.js';
 import { WorkflowExecutionStepLog } from './WorkflowExecutionStepLog.js';
 export interface WorkflowExecutionStep {
+    call: string;
     completedAt: Date | null;
-    trace: string[];
     logs: WorkflowExecutionStepLog[];
     name: string;
     nextStep: string | null;
@@ -10,5 +10,5 @@ export interface WorkflowExecutionStep {
     startedAt: Date | null;
     status: WorkflowExecutionStatus;
     step: string;
-    call: string;
+    trace: string[];
 }

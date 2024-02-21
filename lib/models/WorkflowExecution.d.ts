@@ -7,6 +7,7 @@ export interface WorkflowExecution<T = unknown> extends Model {
     startedAt: Date | null;
     status: WorkflowExecutionStatus;
     steps: WorkflowExecutionStep[];
-    version: string;
     templateId: string;
+    userId: string | null;
+    version: string;
 }

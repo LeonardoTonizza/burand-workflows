@@ -7,6 +7,10 @@ import { WorkflowTemplateVersionRepository } from '../repositories/WorkflowTempl
 import { dispatchWorkerToQueue } from '../utils/dispatchWorkerToQueue.js';
 import { generateGoogleLoggingURL } from '../utils/generateGoogleLoggingURL.js';
 
+export interface CreateWorkflowExecutionOptions {
+  userId: string | null;
+}
+
 @singleton()
 export class WorkflowExecutionService {
   constructor(
@@ -15,7 +19,11 @@ export class WorkflowExecutionService {
     private workflowExecutionRepository: WorkflowExecutionRepository
   ) {}
 
-  async create(templateWorkflowId: string, payload: unknown): Promise<string> {
+  async create(
+    templateWorkflowId: string,
+    payload: unknown,
+    options?: CreateWorkflowExecutionOptions
+  ): Promise<string> {
     const template = await this.workflowTemplateRepository.getById(templateWorkflowId);
 
     const templateVersion = await this.workflowTemplateVersionRepository.getByVersion(
@@ -25,9 +33,12 @@ export class WorkflowExecutionService {
 
     const execution = mapWorkflowTemplateToExecution(template, templateVersion);
 
+    const userId = options?.userId ?? null;
+
     const id = await this.workflowExecutionRepository.add({
       ...execution,
-      payload
+      payload,
+      userId
     });
 
     return id;

@@ -1,8 +1,8 @@
 export interface WorkflowTemplateStep {
+    call: string;
     description: string;
     name: string;
-    step: string;
     nextStep: string | null;
     parallelSteps: string[];
-    call: string;
+    step: string;
 }
