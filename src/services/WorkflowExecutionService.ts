@@ -34,7 +34,7 @@ export class WorkflowExecutionService {
     const id = await this.workflowExecutionRepository.add({
       ...execution,
       payload,
-      userId: userId ?? null
+      userId
     });
 
     return id;
