@@ -18,7 +18,14 @@ export function onWorkerDispatched<T>(
   options: TaskQueueOptions,
   handler: (request: Request<WorkerDispatched<T>>) => void | Promise<void>
 ): TaskQueueFunction<WorkerDispatched<T>> {
-  return onTaskDispatched<WorkerDispatched<T>>(options, async event => {
+  const mergeOptions = {
+    retryConfig: {
+      maxAttempts: 3
+    },
+    ...options
+  };
+
+  return onTaskDispatched<WorkerDispatched<T>>(mergeOptions, async event => {
     log('onWorkerDispatched triggered', event);
 
     await getFirestore().runTransaction(async t => {
@@ -29,6 +36,12 @@ export function onWorkerDispatched<T>(
       const step = data.steps.find(s => s.step === event.data.step);
       if (!step) {
         return;
+      }
+
+      step.retryCount = event.retryCount;
+
+      if (!step.maxAttempts) {
+        step.maxAttempts = mergeOptions.retryConfig.maxAttempts as number;
       }
 
       step.startedAt = new Date();

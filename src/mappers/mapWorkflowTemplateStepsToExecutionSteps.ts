@@ -13,7 +13,9 @@ export function mapWorkflowTemplateStepsToExecutionSteps(steps: WorkflowTemplate
       trace: [],
       startedAt: null,
       status: 'idle',
-      logs: []
+      logs: [],
+      maxAttempts: 0,
+      retryCount: 0
     } satisfies WorkflowExecutionStep;
   });
 }
