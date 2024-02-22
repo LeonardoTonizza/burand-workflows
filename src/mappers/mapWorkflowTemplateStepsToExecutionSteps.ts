@@ -2,12 +2,12 @@ import { WorkflowExecutionStep } from '../interfaces/WorkflowExecutionStep.js';
 import { WorkflowTemplateStep } from '../interfaces/WorkflowTemplateStep.js';
 
 export function mapWorkflowTemplateStepsToExecutionSteps(steps: WorkflowTemplateStep[]): WorkflowExecutionStep[] {
-  return steps.map(({ step, name, nextStep, parallelSteps, call }) => {
+  return steps.map(({ step, name, next, parallel, call }) => {
     return {
       step,
       name,
-      nextStep,
-      parallelSteps,
+      next,
+      parallel,
       call,
       completedAt: null,
       trace: [],
@@ -15,7 +15,7 @@ export function mapWorkflowTemplateStepsToExecutionSteps(steps: WorkflowTemplate
       status: 'idle',
       logs: [],
       maxAttempts: 0,
-      retryCount: 0
+      retries: 0
     } satisfies WorkflowExecutionStep;
   });
 }

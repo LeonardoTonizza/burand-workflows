@@ -17,7 +17,7 @@ export async function dispatchWorkersToQueue(
 
   const promises: Promise<void>[] = [];
 
-  for (const parallel of step.parallelSteps) {
+  for (const parallel of step.parallel) {
     const parallelStep = steps.find(s => s.step === parallel);
     if (parallelStep) {
       promises.push(

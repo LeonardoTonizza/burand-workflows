@@ -39,11 +39,11 @@ export const startWorkflowExecutionNextStep = onDocumentUpdated(`${WORKFLOW_EXEC
     return;
   }
 
-  if (!completedStep.nextStep) {
+  if (!completedStep.next) {
     return;
   }
 
-  const nextStep = newData.steps.find(s => s.step === completedStep.nextStep);
+  const nextStep = newData.steps.find(s => s.step === completedStep.next);
   if (!nextStep) {
     return;
   }

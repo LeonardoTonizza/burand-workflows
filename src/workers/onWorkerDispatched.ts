@@ -38,7 +38,7 @@ export function onWorkerDispatched<T>(
         return;
       }
 
-      step.retryCount = event.retryCount;
+      step.retries = event.retryCount;
 
       if (!step.maxAttempts) {
         step.maxAttempts = mergeOptions.retryConfig.maxAttempts as number;

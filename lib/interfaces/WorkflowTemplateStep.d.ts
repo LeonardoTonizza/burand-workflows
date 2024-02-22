@@ -2,7 +2,7 @@ export interface WorkflowTemplateStep {
     call: string;
     description: string;
     name: string;
-    nextStep: string | null;
-    parallelSteps: string[];
+    next: string | null;
+    parallel: string[];
     step: string;
 }

@@ -7,9 +7,9 @@ export interface WorkflowExecutionStep {
   logs: WorkflowExecutionStepLog[];
   maxAttempts: number;
   name: string;
-  nextStep: string | null;
-  parallelSteps: string[];
-  retryCount: number;
+  next: string | null;
+  parallel: string[];
+  retries: number;
   startedAt: Date | null;
   status: WorkflowExecutionStatus;
   step: string;
