@@ -4,8 +4,12 @@ import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 import { FirestoreCollecionName } from '../config/FirestoreCollecionName.js';
 import { WorkflowExecution } from '../models/WorkflowExecution.js';
-import { dispatchWorkersToQueue } from '../utils/dispatchWorkersToQueue.js';
-import { findStepThatChangedToCompleted } from '../utils/findStepThatChangedToCompleted.js';
+import {
+  dispatchWorkersToQueue,
+  findStepThatChangedToCompleted,
+  findStepThatChangedToFailed,
+  itWasLastAttempt
+} from '../utils/index.js';
 
 const { WORKFLOW_EXECUTIONS } = FirestoreCollecionName;
 
@@ -36,6 +40,18 @@ export const startWorkflowExecutionNextStep = onDocumentUpdated(`${WORKFLOW_EXEC
 
   const completedStep = findStepThatChangedToCompleted(oldData.steps, newData.steps);
   if (!completedStep) {
+    const failedStep = findStepThatChangedToFailed(oldData.steps, newData.steps);
+    if (!failedStep) {
+      return;
+    }
+
+    if (itWasLastAttempt(failedStep)) {
+      await event.data.after.ref.update({
+        status: 'failed',
+        updatedAt: FieldValue.serverTimestamp()
+      });
+    }
+
     return;
   }
 

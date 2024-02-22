@@ -1,5 +1,5 @@
 import { ofFirestore } from '@burand/functions/firestore';
-import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
 import { error, log } from 'firebase-functions/logger';
 import { Request, TaskQueueFunction, TaskQueueOptions, onTaskDispatched } from 'firebase-functions/v2/tasks';
 
@@ -39,10 +39,7 @@ export function onWorkerDispatched<T>(
       }
 
       step.retries = event.retryCount;
-
-      if (!step.maxAttempts) {
-        step.maxAttempts = mergeOptions.retryConfig.maxAttempts as number;
-      }
+      step.maxAttempts = mergeOptions.retryConfig.maxAttempts as number;
 
       step.startedAt = new Date();
       step.status = 'running';
@@ -57,7 +54,7 @@ export function onWorkerDispatched<T>(
 
       t.update(workerExecutionRef, {
         steps: data.steps,
-        updatedAt: FieldValue.serverTimestamp()
+        updatedAt: new Date()
       });
     });
 
@@ -85,7 +82,7 @@ export function onWorkerDispatched<T>(
 
         t.update(sfDocRef, {
           steps: data.steps,
-          updatedAt: FieldValue.serverTimestamp()
+          updatedAt: new Date()
         });
       });
     } catch (err) {
@@ -109,9 +106,8 @@ export function onWorkerDispatched<T>(
         });
 
         t.update(sfDocRef, {
-          status: 'failed',
           steps: data.steps,
-          updatedAt: FieldValue.serverTimestamp()
+          updatedAt: new Date()
         });
       });
 
