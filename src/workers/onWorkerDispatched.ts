@@ -98,7 +98,6 @@ export function onWorkerDispatched<T>(
           return;
         }
 
-        step.completedAt = new Date();
         step.status = 'failed';
         step.logs.push({
           createdAt: new Date(),
