@@ -1,5 +1,6 @@
 import { ofFirestore } from '@burand/functions/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
+import { log } from 'firebase-functions/logger';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 import { FirestoreCollecionName } from '../config/FirestoreCollecionName.js';
@@ -41,16 +42,20 @@ export const startWorkflowExecutionNextStep = onDocumentUpdated(`${WORKFLOW_EXEC
   const completedStep = findStepThatChangedToCompleted(oldData.steps, newData.steps);
   if (!completedStep) {
     const failedStep = findStepThatChangedToFailed(oldData.steps, newData.steps);
+    log({ failedStep });
+
     if (!failedStep) {
       return;
     }
 
     if (itWasLastAttempt(failedStep)) {
+      log({ itWasLastAttempt: true });
       await event.data.after.ref.update({
         status: 'failed',
         updatedAt: FieldValue.serverTimestamp()
       });
     }
+    log({ itWasLastAttempt: false });
 
     return;
   }
